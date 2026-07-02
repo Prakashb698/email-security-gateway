@@ -1,0 +1,66 @@
+from domains.domain_manager import get_tenant_domain, is_supported_domain
+from fastapi import FastAPI, File, UploadFile
+from scanners.email_parser import parse_email
+from scanners.header_analyzer import analyze_headers
+from scanners.url_scanner import extract_urls, analyze_urls
+from scanners.attachment_scanner import analyze_attachments
+from scanners.risk_engine import calculate_verdict
+
+app = FastAPI(title="SwifPass Email Security API")
+
+SUSPICIOUS_WORDS = [
+    "urgent", "verify", "password", "account suspended",
+    "click here", "login", "invoice", "payment failed",
+    "confirm your identity", "reset your password"
+]
+
+@app.get("/")
+def home():
+    return {"message": "SwifPass Email Security API running"}
+
+@app.post("/scan-email/")
+async def scan_email(file: UploadFile = File(...)):
+    raw_email = await file.read()
+    email_data = parse_email(raw_email)
+    tenant_domain = get_tenant_domain(email_data)
+
+    score = 0
+    findings = []
+
+    text = f"{email_data['subject']} {email_data['body']}".lower()
+
+    for word in SUSPICIOUS_WORDS:
+        if word in text:
+            score += 10
+            findings.append(f"Suspicious keyword found: {word}")
+
+    header_result = analyze_headers(email_data)
+    score += header_result["score"]
+    findings.extend(header_result["findings"])
+
+    urls = extract_urls(email_data["body"])
+    url_result = analyze_urls(urls)
+    score += url_result["score"]
+    findings.extend(url_result["findings"])
+
+    attachment_result = analyze_attachments(email_data["attachments"])
+    score += attachment_result["score"]
+    findings.extend(attachment_result["findings"])
+
+    verdict = calculate_verdict(score, infected=attachment_result["infected"])
+
+    return {
+        "verdict": verdict,
+        "risk_score": min(score, 100),
+        "subject": email_data["subject"],
+        "from": email_data["from"],
+        "to": email_data["to"],
+        "reply_to": email_data["reply_to"],
+        "return_path": email_data["return_path"],
+        "message_id": email_data["message_id"],
+        "urls": urls,
+        "attachments": [a["filename"] for a in email_data["attachments"]],
+        "findings": findings,
+        "tenant_domain": tenant_domain,
+"supported_domain": is_supported_domain(tenant_domain)
+    }
