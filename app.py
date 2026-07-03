@@ -1,3 +1,4 @@
+from database.email_log_repository import save_email_log, get_email_logs_by_domain
 from domains.domain_manager import get_tenant_domain, is_supported_domain
 from fastapi import FastAPI, File, UploadFile
 from scanners.email_parser import parse_email
@@ -49,6 +50,15 @@ async def scan_email(file: UploadFile = File(...)):
 
     verdict = calculate_verdict(score, infected=attachment_result["infected"])
 
+    save_email_log(
+        sender=email_data["from"],
+        recipient=email_data["to"],
+        subject=email_data["subject"],
+        verdict=verdict,
+        risk_score=min(score, 100),
+        domain_name=tenant_domain
+    )
+
     return {
         "verdict": verdict,
         "risk_score": min(score, 100),
@@ -63,4 +73,12 @@ async def scan_email(file: UploadFile = File(...)):
         "findings": findings,
         "tenant_domain": tenant_domain,
 "supported_domain": is_supported_domain(tenant_domain)
+    }
+
+
+@app.get("/domains/{domain_name}/email-logs")
+def domain_email_logs(domain_name: str):
+    return {
+        "domain": domain_name,
+        "email_logs": get_email_logs_by_domain(domain_name)
     }

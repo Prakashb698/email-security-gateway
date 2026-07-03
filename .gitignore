@@ -5,3 +5,6 @@ database/*.db
 logs/*
 quarantine/*
 .env
+
+# Local SQLite database
+database/swifpass.db
