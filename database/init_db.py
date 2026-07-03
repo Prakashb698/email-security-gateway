@@ -26,6 +26,18 @@ CREATE TABLE IF NOT EXISTS email_logs(
 )
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    domain_id INTEGER NOT NULL,
+    active INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(domain_id) REFERENCES domains(id)
+)
+""")
+
 conn.commit()
 conn.close()
 

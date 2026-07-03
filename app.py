@@ -1,3 +1,8 @@
+from fastapi import Depends
+from auth.dependencies import get_current_user
+from pydantic import BaseModel
+from fastapi import HTTPException
+from auth.auth_service import authenticate_user
 from database.email_log_repository import save_email_log, get_email_logs_by_domain
 from domains.domain_manager import get_tenant_domain, is_supported_domain
 from fastapi import FastAPI, File, UploadFile
@@ -77,8 +82,49 @@ async def scan_email(file: UploadFile = File(...)):
 
 
 @app.get("/domains/{domain_name}/email-logs")
-def domain_email_logs(domain_name: str):
+def domain_email_logs(
+    domain_name: str,
+    current_user: dict = Depends(get_current_user)
+):
+    if domain_name != current_user["domain_name"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied to this domain"
+        )
+
     return {
+        "domain": domain_name,
+        "email_logs": get_email_logs_by_domain(domain_name)
+    }
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/auth/login")
+def login(request: LoginRequest):
+    token = authenticate_user(
+        email=request.email,
+        password=request.password
+    )
+
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    return token
+
+
+@app.get("/me/email-logs")
+def my_email_logs(current_user: dict = Depends(get_current_user)):
+    domain_name = current_user["domain_name"]
+
+    return {
+        "user": current_user["email"],
         "domain": domain_name,
         "email_logs": get_email_logs_by_domain(domain_name)
     }
