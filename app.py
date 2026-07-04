@@ -11,8 +11,8 @@ from scanners.header_analyzer import analyze_headers
 from scanners.url_scanner import extract_urls, analyze_urls
 from scanners.attachment_scanner import analyze_attachments
 from scanners.risk_engine import calculate_verdict
-from quarantine.quarantine_service import store_quarantined_email
-from quarantine.quarantine_repository import save_quarantine_record, get_quarantine_records_by_domain
+from quarantine.quarantine_service import store_quarantined_email, delete_quarantined_email_file
+from quarantine.quarantine_repository import save_quarantine_record, get_quarantine_records_by_domain, get_quarantine_record_by_id, delete_quarantine_record
 
 app = FastAPI(title="SwifPass Email Security API")
 
@@ -165,4 +165,65 @@ def my_quarantine_records(
         "user": current_user["email"],
         "domain": domain_name,
         "quarantine_records": get_quarantine_records_by_domain(domain_name)
+    }
+
+
+@app.get("/me/quarantine/{record_id}")
+def my_quarantine_record(
+    record_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    domain_name = current_user["domain_name"]
+
+    record = get_quarantine_record_by_id(
+        record_id=record_id,
+        domain_name=domain_name,
+    )
+
+    if not record:
+        raise HTTPException(
+            status_code=404,
+            detail="Quarantine record not found",
+        )
+
+    return {
+        "user": current_user["email"],
+        "domain": domain_name,
+        "quarantine_record": record,
+    }
+
+
+@app.delete("/me/quarantine/{record_id}")
+def delete_my_quarantine_record(
+    record_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    domain_name = current_user["domain_name"]
+
+    record = get_quarantine_record_by_id(
+        record_id=record_id,
+        domain_name=domain_name,
+    )
+
+    if not record:
+        raise HTTPException(
+            status_code=404,
+            detail="Quarantine record not found",
+        )
+
+    file_deleted = delete_quarantined_email_file(
+        file_path=record["file_path"],
+        domain_name=domain_name,
+    )
+
+    db_deleted = delete_quarantine_record(
+        record_id=record_id,
+        domain_name=domain_name,
+    )
+
+    return {
+        "deleted": db_deleted,
+        "file_deleted": file_deleted,
+        "record_id": record_id,
+        "domain": domain_name,
     }

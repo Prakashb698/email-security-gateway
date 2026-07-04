@@ -85,3 +85,69 @@ def get_quarantine_records_by_domain(domain_name: str):
     conn.close()
 
     return records
+
+
+def get_quarantine_record_by_id(
+    record_id: int,
+    domain_name: str,
+):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT
+            qr.id,
+            qr.sender,
+            qr.recipient,
+            qr.subject,
+            qr.verdict,
+            qr.risk_score,
+            qr.reason,
+            qr.file_path,
+            qr.created_at
+        FROM quarantine_records qr
+        JOIN domains d ON qr.domain_id = d.id
+        WHERE qr.id = ?
+          AND d.name = ?
+          AND d.active = 1
+        """,
+        (record_id, domain_name),
+    )
+
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    return dict(row)
+
+
+def delete_quarantine_record(
+    record_id: int,
+    domain_name: str,
+) -> bool:
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        DELETE FROM quarantine_records
+        WHERE id = ?
+          AND domain_id = (
+              SELECT id
+              FROM domains
+              WHERE name = ?
+                AND active = 1
+          )
+        """,
+        (record_id, domain_name),
+    )
+
+    deleted = cur.rowcount > 0
+
+    conn.commit()
+    conn.close()
+
+    return deleted

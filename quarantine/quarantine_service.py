@@ -18,3 +18,25 @@ def store_quarantined_email(
     file_path.write_bytes(raw_email)
 
     return str(file_path)
+
+
+def delete_quarantined_email_file(
+    file_path: str,
+    domain_name: str,
+) -> bool:
+    path = Path(file_path)
+    expected_root = (QUARANTINE_ROOT / domain_name).resolve()
+
+    try:
+        resolved_path = path.resolve()
+    except OSError:
+        return False
+
+    if resolved_path.parent != expected_root:
+        return False
+
+    if not resolved_path.is_file():
+        return False
+
+    resolved_path.unlink()
+    return True
