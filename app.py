@@ -11,6 +11,8 @@ from scanners.header_analyzer import analyze_headers
 from scanners.url_scanner import extract_urls, analyze_urls
 from scanners.attachment_scanner import analyze_attachments
 from scanners.risk_engine import calculate_verdict
+from quarantine.quarantine_service import store_quarantined_email
+from quarantine.quarantine_repository import save_quarantine_record, get_quarantine_records_by_domain
 
 app = FastAPI(title="SwifPass Email Security API")
 
@@ -64,6 +66,26 @@ async def scan_email(file: UploadFile = File(...)):
         domain_name=tenant_domain
     )
 
+    quarantine_id = None
+    quarantine_file_path = None
+
+    if verdict in ("high_risk", "infected") or min(score, 100) >= 70:
+        quarantine_file_path = store_quarantined_email(
+            raw_email=raw_email,
+            domain_name=tenant_domain
+        )
+
+        quarantine_id = save_quarantine_record(
+            sender=email_data["from"],
+            recipient=email_data["to"],
+            subject=email_data["subject"],
+            verdict=verdict,
+            risk_score=min(score, 100),
+            reason="High-risk or infected email",
+            file_path=quarantine_file_path,
+            domain_name=tenant_domain
+        )
+
     return {
         "verdict": verdict,
         "risk_score": min(score, 100),
@@ -77,7 +99,10 @@ async def scan_email(file: UploadFile = File(...)):
         "attachments": [a["filename"] for a in email_data["attachments"]],
         "findings": findings,
         "tenant_domain": tenant_domain,
-"supported_domain": is_supported_domain(tenant_domain)
+"supported_domain": is_supported_domain(tenant_domain),
+        "quarantined": quarantine_id is not None,
+        "quarantine_id": quarantine_id,
+        "quarantine_file_path": quarantine_file_path
     }
 
 
@@ -127,4 +152,17 @@ def my_email_logs(current_user: dict = Depends(get_current_user)):
         "user": current_user["email"],
         "domain": domain_name,
         "email_logs": get_email_logs_by_domain(domain_name)
+    }
+
+
+@app.get("/me/quarantine")
+def my_quarantine_records(
+    current_user: dict = Depends(get_current_user)
+):
+    domain_name = current_user["domain_name"]
+
+    return {
+        "user": current_user["email"],
+        "domain": domain_name,
+        "quarantine_records": get_quarantine_records_by_domain(domain_name)
     }

@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 database/*.db
 logs/*
-quarantine/*
+quarantine/**/*.eml
+quarantine/**/
 .env
 
 # Local SQLite database

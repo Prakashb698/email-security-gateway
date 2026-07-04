@@ -38,6 +38,22 @@ CREATE TABLE IF NOT EXISTS users(
 )
 """)
 
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS quarantine_records(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT,
+    recipient TEXT,
+    subject TEXT,
+    verdict TEXT,
+    risk_score INTEGER,
+    reason TEXT,
+    file_path TEXT,
+    domain_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(domain_id) REFERENCES domains(id)
+)
+""")
 conn.commit()
 conn.close()
 
