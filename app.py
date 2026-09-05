@@ -397,3 +397,19 @@ def delete_my_quarantine_record(
         "record_id": record_id,
         "domain": domain_name,
     }
+
+
+# ---------------------------------------------------------
+# SwifPass Security Dashboard
+# ---------------------------------------------------------
+
+from fastapi.staticfiles import StaticFiles
+
+app.mount(
+    "/dashboard",
+    StaticFiles(
+        directory="dashboard",
+        html=True
+    ),
+    name="dashboard"
+)

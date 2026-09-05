@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Security Gateway</title>
+    <link rel="stylesheet" href="/dashboard/dashboard.css">
+</head>
+
+<body>
+
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+        <div class="brand-mark">S</div>
+
+        <h1>Email Security Gateway</h1>
+        <p class="login-subtitle">Email Security Gateway</p>
+
+        <form id="loginForm">
+            <label>Email</label>
+            <input
+                id="email"
+                type="email"
+                placeholder="admin@swifpass.local"
+                required
+            >
+
+            <label>Password</label>
+            <input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                required
+            >
+
+            <button type="submit" class="primary-button">
+                Sign In
+            </button>
+
+            <p id="loginError" class="login-error"></p>
+        </form>
+    </div>
+</div>
+
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+
+        <div class="logo-area">
+            <div class="brand-mark small">S</div>
+
+            <div>
+                <div class="logo-title">Email Security</div>
+                <div class="logo-subtitle">Security Gateway</div>
+            </div>
+        </div>
+
+
+        <nav>
+            <button class="nav-item active" data-section="dashboard">
+                <span>⌂</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item" data-section="logs">
+                <span>▤</span>
+                Email Logs
+            </button>
+
+            <button class="nav-item" data-section="quarantine">
+                <span>◇</span>
+                Quarantine
+            </button>
+
+            <button class="nav-item" data-section="scanner">
+                <span>⌁</span>
+                Scan Email
+            </button>
+        </nav>
+
+
+        <div class="sidebar-footer">
+            <div class="system-indicator">
+                <span class="status-dot"></span>
+                Protection Active
+            </div>
+
+            <div id="tenantName" class="tenant-name">
+                SwifPass
+            </div>
+
+            <button id="logoutButton" class="logout-button">
+                Sign Out
+            </button>
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="top-header">
+
+            <div>
+                <p class="eyebrow">SECURITY OPERATIONS</p>
+                <h1>Email Security Overview</h1>
+            </div>
+
+            <div class="header-status">
+                <span class="status-dot"></span>
+                Gateway Online
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboardSection" class="page-section active-section">
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>Total Emails</span>
+                        <span class="card-icon">✉</span>
+                    </div>
+
+                    <div id="totalEmails" class="stat-value">0</div>
+                    <div class="stat-caption">Messages analyzed</div>
+                </div>
+
+
+                <div class="stat-card threat">
+                    <div class="stat-top">
+                        <span>Threats Detected</span>
+                        <span class="card-icon">⚠</span>
+                    </div>
+
+                    <div id="threatCount" class="stat-value">0</div>
+                    <div class="stat-caption">Suspicious or high-risk</div>
+                </div>
+
+
+                <div class="stat-card quarantine">
+                    <div class="stat-top">
+                        <span>Quarantined</span>
+                        <span class="card-icon">◆</span>
+                    </div>
+
+                    <div id="quarantineCount" class="stat-value">0</div>
+                    <div class="stat-caption">Isolated messages</div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span>Average Risk</span>
+                        <span class="card-icon">◉</span>
+                    </div>
+
+                    <div id="averageRisk" class="stat-value">0%</div>
+                    <div class="stat-caption">Current tenant</div>
+                </div>
+
+            </div>
+
+
+            <div class="two-column">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">EMAIL AUTHENTICATION</p>
+                            <h2>Identity Validation</h2>
+                        </div>
+
+                        <span id="authScanMessage" class="muted">
+                            Scan an email to validate
+                        </span>
+                    </div>
+
+
+                    <div class="auth-grid">
+
+                        <div class="auth-card">
+                            <div class="auth-label">SPF</div>
+                            <div id="spfStatus" class="auth-status unknown">
+                                —
+                            </div>
+                            <div class="auth-description">
+                                Sender Policy Framework
+                            </div>
+                        </div>
+
+
+                        <div class="auth-card">
+                            <div class="auth-label">DKIM</div>
+                            <div id="dkimStatus" class="auth-status unknown">
+                                —
+                            </div>
+                            <div class="auth-description">
+                                Cryptographic Signature
+                            </div>
+                        </div>
+
+
+                        <div class="auth-card">
+                            <div class="auth-label">DMARC</div>
+                            <div id="dmarcStatus" class="auth-status unknown">
+                                —
+                            </div>
+                            <div class="auth-description">
+                                Domain Alignment
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel security-panel">
+
+                    <p class="eyebrow">SYSTEM STATUS</p>
+                    <h2>Security Gateway</h2>
+
+                    <div class="security-line">
+                        <span>API Service</span>
+                        <span class="success-badge">ONLINE</span>
+                    </div>
+
+                    <div class="security-line">
+                        <span>Tenant Isolation</span>
+                        <span class="success-badge">ACTIVE</span>
+                    </div>
+
+                    <div class="security-line">
+                        <span>JWT Protection</span>
+                        <span class="success-badge">ACTIVE</span>
+                    </div>
+
+                    <div class="security-line">
+                        <span>Quarantine Engine</span>
+                        <span class="success-badge">ACTIVE</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="eyebrow">ACTIVITY</p>
+                        <h2>Recent Email Analysis</h2>
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        onclick="showSection('scanner')"
+                    >
+                        + Scan Email
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Sender</th>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Risk</th>
+                            <th>Verdict</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="recentLogsBody"></tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- EMAIL LOGS -->
+
+        <section id="logsSection" class="page-section">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">MESSAGE HISTORY</p>
+                        <h2>Email Analysis Logs</h2>
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        onclick="loadDashboardData()"
+                    >
+                        Refresh
+                    </button>
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sender</th>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Risk Score</th>
+                            <th>Verdict</th>
+                            <th>Created</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="allLogsBody"></tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- QUARANTINE -->
+
+        <section id="quarantineSection" class="page-section">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">THREAT ISOLATION</p>
+                        <h2>Quarantine</h2>
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        onclick="loadDashboardData()"
+                    >
+                        Refresh
+                    </button>
+                </div>
+
+
+                <div class="quarantine-message">
+                    Suspicious and high-risk emails are isolated here for
+                    secure investigation.
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sender</th>
+                            <th>Subject</th>
+                            <th>Risk</th>
+                            <th>Reason</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="quarantineBody"></tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SCANNER -->
+
+        <section id="scannerSection" class="page-section">
+
+            <div class="scanner-layout">
+
+                <div class="panel scan-panel">
+
+                    <p class="eyebrow">LIVE ANALYSIS</p>
+                    <h2>Scan an Email</h2>
+
+                    <p class="muted scan-description">
+                        Upload a raw .eml file to analyze phishing indicators,
+                        risk level and email authentication.
+                    </p>
+
+
+                    <div
+                        id="dropZone"
+                        class="upload-box"
+                        onclick="document.getElementById('emailFile').click()"
+                    >
+
+                        <div class="upload-icon">↑</div>
+
+                        <h3>Upload Email</h3>
+
+                        <p>
+                            Select a .eml file
+                        </p>
+
+                        <input
+                            id="emailFile"
+                            type="file"
+                            accept=".eml,message/rfc822"
+                            hidden
+                        >
+
+                        <div id="selectedFile" class="selected-file">
+                            No file selected
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="scanButton"
+                        class="primary-button scan-button"
+                    >
+                        Analyze Email
+                    </button>
+
+                </div>
+
+
+                <div class="panel results-panel">
+
+                    <p class="eyebrow">SCAN RESULT</p>
+                    <h2>Threat Analysis</h2>
+
+                    <div id="emptyScanState" class="empty-state">
+                        Upload an email to begin security analysis.
+                    </div>
+
+
+                    <div id="scanResults" class="scan-results hidden">
+
+                        <div class="result-row">
+                            <span>Verdict</span>
+                            <span id="scanVerdict"></span>
+                        </div>
+
+                        <div class="result-row">
+                            <span>Risk Score</span>
+                            <strong id="scanRisk"></strong>
+                        </div>
+
+                        <div class="result-row">
+                            <span>Sender</span>
+                            <strong id="scanSender"></strong>
+                        </div>
+
+                        <div class="result-row">
+                            <span>Subject</span>
+                            <strong id="scanSubject"></strong>
+                        </div>
+
+                        <div class="result-row">
+                            <span>Quarantined</span>
+                            <strong id="scanQuarantined"></strong>
+                        </div>
+
+
+                        <div class="result-authentication">
+
+                            <div>
+                                <span>SPF</span>
+                                <strong id="resultSpf">—</strong>
+                            </div>
+
+                            <div>
+                                <span>DKIM</span>
+                                <strong id="resultDkim">—</strong>
+                            </div>
+
+                            <div>
+                                <span>DMARC</span>
+                                <strong id="resultDmarc">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="findings-area">
+                            <h3>Security Findings</h3>
+                            <div id="scanFindings"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+<script src="/dashboard/dashboard.js"></script>
+
+</body>
+</html>
