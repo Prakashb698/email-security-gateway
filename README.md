@@ -841,19 +841,73 @@ Potential future extensions include:
 
 # Research References
 
-This project was developed after studying phishing-detection research.
+This project was developed after studying research on multi-modal phishing detection and deep-learning-based email security.
 
-The exact research papers used as primary references will be listed here with their verified:
+## Paper 1 — Multi-Modal Phishing Detection
 
-- Paper title
-- Authors
-- Publication venue
-- Year
-- DOI or research-paper link
+**M. Murhej and G. Nallasivan**
 
-This section will be updated using the exact papers studied during the research phase rather than adding unverified citations.
+**“Multi-modal framework for phishing attack detection and mitigation through behavior analysis using EM-BERT and SPCA-based EAI-SC-LSTM.”**
+
+*Frontiers in Communications and Networks*, 2025.
+
+DOI: https://doi.org/10.3389/frcmn.2025.1587654
+
+### Connection to this project
+
+This paper influenced the multi-signal architecture used in the Email Security Gateway. The research combines multiple sources of phishing information instead of relying only on message text.
+
+Concepts adapted into this project include:
+
+- Multi-modal / multi-signal phishing analysis
+- Email-content analysis
+- Feature combination
+- Explainable security decisions
+- Integration of multiple security indicators
+
+The current implementation combines content, headers, URLs, attachments, SPF, DKIM, and DMARC into an explainable risk-scoring pipeline.
 
 ---
+
+## Paper 2 — Deep-Learning-Based Phishing Email Detection
+
+**K. Thakur, M. L. Ali, M. A. Obaidat, and A. Kamruzzaman**
+
+**“A systematic review on deep-learning-based phishing email detection.”**
+
+*Electronics*, 2023, 12(21), 4545.
+
+DOI: https://doi.org/10.3390/electronics12214545
+
+### Connection to this project
+
+This paper provided background on deep-learning approaches for phishing-email detection, including NLP, neural-network classification, feature extraction, datasets, and hybrid detection systems.
+
+The current project focuses on building the complete security-engineering pipeline around such models. A future BERT, DistilBERT, or LSTM classifier can be integrated into the existing content-analysis layer.
+
+---
+
+## Research-to-Implementation Mapping
+
+| Research Concept | Project Implementation |
+|---|---|
+| Multi-modal detection | Multi-signal email analysis |
+| Email-text analysis | Content analyzer |
+| Metadata features | Header analysis |
+| URL features | URL scanner |
+| Feature fusion | Risk-scoring engine |
+| Explainability | Security findings |
+| Sender authentication | SPF |
+| Cryptographic validation | DKIM |
+| Domain alignment | DMARC |
+| Threat mitigation | Automatic quarantine |
+| Data isolation | Multi-tenant JWT authorization |
+| Visualization | Security operations dashboard |
+
+The project represents a **research-to-engineering implementation**, translating phishing-detection research concepts into a working email-security platform.
+
+---
+
 
 # Project Status
 
