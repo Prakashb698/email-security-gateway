@@ -9,3 +9,50 @@ quarantine/**/
 
 # Local SQLite database
 database/swifpass.db
+
+# ============================================
+# Security / Runtime files - DO NOT COMMIT
+# ============================================
+
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Raw emails
+*.eml
+
+# Quarantine runtime files
+quarantine/**/*.eml
+
+# Keys / certificates
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Backup / temporary files
+*.backup
+*.bak
+*.before-*
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

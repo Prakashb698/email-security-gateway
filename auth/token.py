@@ -4,10 +4,12 @@ from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 
 
-SECRET_KEY = os.environ.get(
-    "SWIFPASS_JWT_SECRET",
-    "REMOVED_DEVELOPMENT_SECRET"
-)
+SECRET_KEY = os.environ.get("SWIFPASS_JWT_SECRET")
+
+if not SECRET_KEY:
+    raise RuntimeError(
+        "SWIFPASS_JWT_SECRET environment variable is required"
+    )
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
