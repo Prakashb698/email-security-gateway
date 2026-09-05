@@ -555,6 +555,22 @@ Features include:
 
 ---
 
+# Application Screenshots
+
+## Security Operations Dashboard
+
+The dashboard provides tenant-specific visibility into analyzed emails, detected threats, quarantine activity, risk scores, and recent security events.
+
+![Email Security Dashboard](docs/images/dashboard-overview.png)
+
+## Live Email Security Analysis
+
+Raw `.eml` messages can be uploaded for security analysis. The engine evaluates phishing indicators together with SPF, DKIM, and DMARC authentication.
+
+![Live Email Analysis](docs/images/live-email-analysis.png)
+
+---
+
 # Experimental Validation
 
 The project was validated using both genuine emails and controlled security tests.
