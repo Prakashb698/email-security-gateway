@@ -26,6 +26,23 @@ The system analyzes several independent email characteristics and combines them 
 
 ---
 
+# Application Screenshots
+
+## Security Operations Dashboard
+
+The dashboard provides tenant-specific visibility into analyzed emails, detected threats, quarantine activity, risk scores, and recent security events.
+
+![Email Security Dashboard](docs/images/dashboard-overview.png)
+
+## Live Email Security Analysis
+
+Raw `.eml` messages can be uploaded for security analysis. The engine evaluates phishing indicators together with SPF, DKIM, and DMARC authentication.
+
+![Live Email Analysis](docs/images/live-email-analysis.png)
+
+---
+
+
 # Research Motivation
 
 Before building the application, I studied phishing-detection research that explored concepts such as:
@@ -552,22 +569,6 @@ Features include:
 - DKIM status
 - DMARC status
 - Live `.eml` email scanning
-
----
-
-# Application Screenshots
-
-## Security Operations Dashboard
-
-The dashboard provides tenant-specific visibility into analyzed emails, detected threats, quarantine activity, risk scores, and recent security events.
-
-![Email Security Dashboard](docs/images/dashboard-overview.png)
-
-## Live Email Security Analysis
-
-Raw `.eml` messages can be uploaded for security analysis. The engine evaluates phishing indicators together with SPF, DKIM, and DMARC authentication.
-
-![Live Email Analysis](docs/images/live-email-analysis.png)
 
 ---
 
