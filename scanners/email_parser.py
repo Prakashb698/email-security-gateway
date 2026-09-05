@@ -5,12 +5,14 @@ def parse_email(raw_email: bytes):
     msg = BytesParser(policy=policy.default).parsebytes(raw_email)
 
     data = {
+	"raw_email": raw_email,
         "subject": msg.get("subject", ""),
         "from": msg.get("from", ""),
         "to": msg.get("to", ""),
         "reply_to": msg.get("reply-to", ""),
         "return_path": msg.get("return-path", ""),
         "message_id": msg.get("message-id", ""),
+        "message": msg,
         "body": "",
         "attachments": []
     }
